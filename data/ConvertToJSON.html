@@ -15,7 +15,7 @@ function run() {
 		var data = $.csv.toObjects(fr.result);
 		data = filter(data);
 		var text = "var IE_STATUS = " + JSON.stringify(data);
-		document.getElementById("output").textContent = text;
+		document.getElementById("output").textContent = text.replace(/{\"name\"/g,"\n{\"name\"");
 		var blob = new Blob([text],"text/javascript");
 		navigator.msSaveBlob(blob,"ie-status.js");
 	},false);
@@ -52,6 +52,6 @@ function filter(data) {
 </head>
 <body>
 	<input type=file id=thefile> <button onclick="run()">Write JSON</button><br>
-	<textarea id="output" cols="100" rows="40"></textarea>
+	<textarea id="output" cols="100" rows="40" wrap="off"></textarea>
 </body>
 </html>
