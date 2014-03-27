@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<title>Export CSV data</title>
+<script src="http://code.jquery.com/jquery-1.8.2.js"></script>
+<script src="http://jquery-csv.googlecode.com/files/jquery.csv-0.71.js"></script>
+<script src="ie-status.js"></script>
+
+<script language="javascript">
+
+function run() {
+	var chromeStatusURL = "http://www.chromestatus.com/features.json";
+	$.getJSON(chromeStatusURL,function(chromeData) {
+		var data = mergeData(IE_STATUS,chromeData);
+		var csv = createCSV(data);
+		document.getElementById("output").textContent = csv;
+		var blob = new Blob([csv],"text/plain");
+		navigator.msSaveBlob(blob,"status.csv");
+	});
+}
+
+function mergeData(ie,chrome) {
+	//Prefer ie status over chrome
+	ie.forEach(function(x) {
+		var index = findChromeData(chrome,x);
+		if(index>=0) {
+			var item = chrome[index];
+			x.include = true;
+			x.id = "@" + item.id; //Ensure IDs stay in sync, prefix with @ to avoid excel truncation
+			chrome.splice(index,1); //Remove item so we don't duplicate it
+		}
+	});
+	//Add Entries
+	chrome.forEach(function(x) {
+		var item = {
+			category:     	x.category,
+			name:         	x.name,
+			link:         	x.spec_link,
+			include:     	false,
+			summary:   		x.summary,
+			standardStatus: x.standardization.text,
+			id:   	"@" + x.id,
+			ieStatus:	{ text: "", iePrefixed: "", ieUnprefixed: ""},
+			msdn: "",
+			wpd: "",
+			demo: ""
+		};
+		ie.push(item);
+	});
+
+	return ie;
+}
+
+function findChromeData(chromeData,x) {
+	for(var i=0;i<chromeData.length;i++) {
+		if(x.chromeID && x.chromeID===chromeData[i].id) return i;
+		if(x.name===chromeData[i].name) return i;
+	}
+	alert("Not Matched: " + x.name);
+	debugger;
+	return -1;
+}
+
+function createCSV(data) {
+	var output = "Category,Name,Link,Include,Summary,StandardStatus,IEStatus,IEPrefixed,IEUnprefixed,MSDN,WebPlatDocs,Demo,ID\r\n";
+	data.forEach(function(x) {
+		var line = encodeForCSV(x.category) + ',' + encodeForCSV(x.name) + "," + encodeForCSV(x.link) + "," + encodeForCSV(x.include) + ","
+			+ encodeForCSV(x.summary) + "," + encodeForCSV(x.standardStatus) + "," + encodeForCSV(x.ieStatus.text) + ","
+			+ encodeForCSV(x.ieStatus.iePrefixed) + "," + encodeForCSV(x.ieStatus.ieUnprefixed) + "," + encodeForCSV(x.msdn) + ","
+			+ encodeForCSV(x.wpd) + "," + encodeForCSV(x.demo) + "," + encodeForCSV(x.id)
+			+ "\r\n";
+		output += line;
+	});
+	return output;
+}
+
+function encodeForCSV(s) {
+	if(s===false) return '"false"';
+	if(!s) return "";
+	s = s.toString().replace(/\"/g,'""');
+	return '"' + s + '"';
+}
+
+</script>
+</head>
+<body onload="run()">
+	<textarea id="output" cols="100" rows="40"></textarea>
+</body>
+</html>

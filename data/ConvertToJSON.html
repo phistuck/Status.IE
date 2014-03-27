@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<title>Write JSON data from CSV</title>
+<script src="http://code.jquery.com/jquery-1.8.2.js"></script>
+<script src="http://jquery-csv.googlecode.com/files/jquery.csv-0.71.js"></script>
+<script language="javascript">
+
+function run() {
+	var files = document.getElementById("thefile").files;
+	if(files.length!=1) return;
+	var fr = new FileReader();
+	fr.addEventListener("load",function(e) {
+		var data = $.csv.toObjects(fr.result);
+		data = filter(data);
+		var text = "var IE_STATUS = " + JSON.stringify(data);
+		document.getElementById("output").textContent = text;
+		var blob = new Blob([text],"text/javascript");
+		navigator.msSaveBlob(blob,"ie-status.js");
+	},false);
+	fr.readAsText(files[0],"utf-8");
+}
+
+function filter(data) {
+	var output = [];
+	data.forEach(function(x) {
+		if(x.Include.toString().toLowerCase()==="true") {
+			var item = {
+				name:         	x.Name,
+				category:     	x.Category,
+				link:         	x.Link,
+				summary:   		x.Summary,
+				standardStatus: x.StandardStatus,
+				ieStatus:  		{
+					text: 			x.IEStatus,
+					iePrefixed:  	x.IEPrefixed,
+					ieUnprefixed:  	x.IEUnprefixed,
+				},
+				msdn:  			x.MSDN,
+				wpd:  			x.WebPlatDocs,
+				demo:			x.Demo,
+				id:				parseInt(x.ID.substr(1)) //Removes "@"
+			};
+			output.push(item);
+		}
+	});
+	return output;
+}
+
+</script>
+</head>
+<body>
+	<input type=file id=thefile> <button onclick="run()">Write JSON</button><br>
+	<textarea id="output" cols="100" rows="40"></textarea>
+</body>
+</html>
