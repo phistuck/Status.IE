@@ -42,6 +42,63 @@ function filter(data) {
 				demo:			x.Demo,
 				id:				parseInt(x.ID.substr(1)) //Removes "@"
 			};
+			switch(x.ChromeStatus) {
+				case "Shipped":
+					item.impl_status_chrome = "Enabled by default";
+					break;
+				case "Prefixed":
+					item.impl_status_chrome = "Enabled by default";
+					item.prefixed = true;
+					break;
+				case "In development":
+					item.impl_status_chrome = "In development";
+					break;
+				case "Not supported":
+					item.impl_status_chrome = "No active development";
+					break;
+			}
+			switch(x.FFStatus) {
+				case "Shipped":
+					item.ff_views = { text: "Shipped", value: 1 };
+					break;
+				case "Prefixed":
+					item.ff_views = { text: "Shipped", value: 1 };
+					break;
+				case "In development":
+					item.ff_views = { text: "In development", value: 2 };
+					break;
+				case "Not supported":
+					item.ff_views = { text: "No public signals", value: 5 };
+					break;
+			}
+			switch(x.OperaStatus) {
+				case "Shipped":
+					item.opera_views = { text: "Shipped", value: 1 };
+					break;
+				case "Prefixed":
+					item.opera_views = { text: "Shipped", value: 1 };
+					break;
+				case "In development":
+					item.opera_views = { text: "In development", value: 2 };
+					break;
+				case "Not supported":
+					item.opera_views = { text: "No public signals", value: 5 };
+					break;
+			}
+			switch(x.SafariStatus) {
+				case "Shipped":
+					item.safari_views = { text: "Shipped", value: 1 };
+					break;
+				case "Prefixed":
+					item.safari_views = { text: "Shipped", value: 1 };
+					break;
+				case "In development":
+					item.safari_views = { text: "In development", value: 2 };
+					break;
+				case "Not supported":
+					item.safari_views = { text: "No public signals", value: 5 };
+					break;
+			}	
 			output.push(item);
 		}
 	});
