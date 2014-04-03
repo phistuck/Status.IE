@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Directive: browserfilter', function () {
+describe('Directive: notmobile', function () {
 
   // load the directive's module
   beforeEach(module('statusieApp'));
@@ -13,8 +13,8 @@ describe('Directive: browserfilter', function () {
   }));
 
   it('should make hidden element visible', inject(function ($compile) {
-    element = angular.element('<browserfilter></browserfilter>');
+    element = angular.element('<notmobile></notmobile>');
     element = $compile(element)(scope);
-    expect(element.text()).toBe('this is the browserfilter directive');
+    expect(element.text()).toBe('this is the notmobile directive');
   }));
 });
