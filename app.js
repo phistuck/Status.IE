@@ -3,20 +3,37 @@ var express = require('express'),
     path = require('path'),
     fs = require('fs'),
     port = process.env.PORT || 9000,
-    app = express();
+    app = express(),
+    root = 'dist',
+    debug = false;
 
-var content = fs.readFileSync(path.join('app', 'static', 'ie-status.json'), {encoding: 'utf8'});
+if(process.argv[2] === 'debug'){
+    root = 'app';
+    debug = true;
+}
 
 app.use(express.compress());
 app.options('/features', cors());
-app.get('/features', cors(), function(req, res, next){
-    res.writeHeader(200, {"Content-Type": "application/json"});
-    res.write(content);
-    res.end();
+app.get('/features', function(req, res){
+   res.sendfile(path.join(__dirname, root, 'static', 'ie-status.json'));
 });
+
+app.get('/favicon.ico', function(req, res){
+    res.sendfile(path.join(__dirname, root, 'favicon.ico'));
+});
+
+app.get('/:id', function(req, res){
+   res.sendfile(path.join(__dirname, root, 'index.html'));
+});
+
 //app.use(express.basicAuth('admin','IE11Rocks!'));
 app.use(express.bodyParser());
-app.use(express.static(path.join(__dirname, 'app')));
+
+if(debug){
+    app.use(express.static(path.join(__dirname, root)));
+}else{
+    app.use(express.static(path.join(__dirname, root), { maxAge: 31557600000 }));
+}
 
 app.listen(port);
 
