@@ -5001,5 +5001,21 @@
     "demo": "",
     "id": null,
     "uservoiceid": null
+  },
+  {
+    "name": "CSS Case-insensitive Attribute Selector Matching",
+    "category": "CSS",
+    "link": "https://drafts.csswg.org/selectors-4/#attribute-case",
+    "summary": "Lets an attribute selector match the value of the attribute regardless of its case. For example, [data-foo=\"bar\" i] matches <span data-foo=\"Bar\">.",
+    "standardStatus": "Working draft or equivalent",
+    "ieStatus": {
+      "text": "Under Consideration",
+      "iePrefixed": "",
+      "ieUnprefixed": ""
+    },
+    "msdn": "",
+    "wpd": "",
+    "demo": "",
+    "id": 5610936115134464
   }
 ]
